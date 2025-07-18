@@ -236,9 +236,6 @@ def events():
         """Generator function that yields SSE data"""
         client = SSEClient()
         try:
-            # Send keepalive immediately to establish connection
-            yield f"data: {json.dumps({'type': 'connected', 'timestamp': datetime.now().isoformat()})}\n\n"
-            
             while True:
                 # Get data from client queue (non-blocking)
                 data = client.get()
@@ -246,10 +243,10 @@ def events():
                     # Send actual webhook data to client
                     yield f"data: {data}\n\n"
                 else:
-                    # Send keepalive every 10 seconds to prevent timeout
+                    # Send empty keepalive to prevent timeout without storing data
                     import time
                     time.sleep(10)
-                    yield f"data: {json.dumps({'type': 'keepalive', 'timestamp': datetime.now().isoformat()})}\n\n"
+                    yield f": keepalive\n\n"
         except GeneratorExit:
             # Clean up client when connection closes
             client.cleanup()

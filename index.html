@@ -401,6 +401,12 @@
         
         eventSource.onmessage = function(event) {
             const data = JSON.parse(event.data);
+            
+            // Filter out system messages (keepalive, connected, etc.)
+            if (data.type && (data.type === 'keepalive' || data.type === 'connected')) {
+                return; // Don't display system messages
+            }
+            
             receivedData.unshift({
                 id: Date.now().toString(),
                 timestamp: new Date().toLocaleString('en-US'),
