@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Receiver</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 300;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .webhook-url {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(222, 226, 230, 0.8);
+            margin: 30px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .webhook-url::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .webhook-url label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1em;
+        }
+        
+        .webhook-url input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            word-break: break-all;
+        }
+        
+        .webhook-url input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .copy-btn {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+        
+        .data-display {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            border: 1px solid rgba(222, 226, 230, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+        
+        .data-display h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .data-entry {
+            background: white;
+            border: 1px solid rgba(222, 226, 230, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-entry::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #17a2b8, #6f42c1);
+        }
+        
+        .data-entry:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .timestamp {
+            color: #6c757d;
+            font-size: 13px;
+            margin-bottom: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .timestamp::before {
+            content: '🕐';
+            margin-right: 8px;
+        }
+        
+        .json-data {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid #e9ecef;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .clear-btn {
+            background: linear-gradient(145deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+        }
+        
+        .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+        
+        .status {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            display: none;
+            font-weight: 500;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .status.success {
+            background: linear-gradient(145deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+        
+        .status.error {
+            background: linear-gradient(145deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+        }
+        
+        .waiting-message {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 40px;
+            font-size: 1.1em;
+        }
+        
+        .waiting-message::before {
+            content: '⏳';
+            display: block;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+                margin-bottom: 30px;
+            }
+            
+            .webhook-url, .data-display {
+                padding: 20px;
+            }
+            
+            .data-display h3 {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+        
+        /* Scrollbar styling */
+        .json-data::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .json-data::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .json-data::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        .json-data::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Webhook Receiver</h1>
+        
+        <div class="webhook-url">
+            <label for="webhookUrl">Webhook URL:</label>
+            <input type="text" id="webhookUrl" readonly>
+            <button class="copy-btn" onclick="copyWebhookUrl()">Copy URL</button>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="data-display">
+            <h3>Received Data <button class="clear-btn" onclick="clearData()">Clear</button></h3>
+            <div id="dataContainer">
+                <div class="waiting-message">Waiting for webhook data...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const webhookUrl = `${window.location.origin}/webhook`;
+        document.getElementById('webhookUrl').value = webhookUrl;
+        
+        let receivedData = [];
+        
+        function copyWebhookUrl() {
+            const input = document.getElementById('webhookUrl');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            
+            // Use modern clipboard API if available
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(input.value).then(() => {
+                    showStatus('Webhook URL copied to clipboard!', 'success');
+                }).catch(() => {
+                    // Fallback to older method
+                    document.execCommand('copy');
+                    showStatus('Webhook URL copied to clipboard!', 'success');
+                });
+            } else {
+                // Fallback for older browsers
+                document.execCommand('copy');
+                showStatus('Webhook URL copied to clipboard!', 'success');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
+        }
+        
+        function clearData() {
+            receivedData = [];
+            updateDataDisplay();
+        }
+        
+        function updateDataDisplay() {
+            const container = document.getElementById('dataContainer');
+            if (receivedData.length === 0) {
+                container.innerHTML = '<div class="waiting-message">Waiting for webhook data...</div>';
+                return;
+            }
+            
+            container.innerHTML = receivedData.map(entry => `
+                <div class="data-entry">
+                    <div class="timestamp">${entry.timestamp}</div>
+                    <div class="json-data">${JSON.stringify(entry.data, null, 2)}</div>
+                    <button class="copy-btn" onclick="copyData('${entry.id}')">Copy Data</button>
+                </div>
+            `).join('');
+        }
+        
+        function copyData(id) {
+            const entry = receivedData.find(e => e.id === id);
+            if (entry) {
+                navigator.clipboard.writeText(JSON.stringify(entry.data, null, 2));
+                showStatus('Data copied to clipboard!', 'success');
+            }
+        }
+        
+        // 使用 EventSource 或 WebSocket 來接收實時數據
+        const eventSource = new EventSource('/events');
+        
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            receivedData.unshift({
+                id: Date.now().toString(),
+                timestamp: new Date().toLocaleString('en-US'),
+                data: data
+            });
+            updateDataDisplay();
+        };
+        
+        eventSource.onerror = function(event) {
+            showStatus('Connection error, please refresh the page', 'error');
+        };
+    </script>
+</body>
+</html>
