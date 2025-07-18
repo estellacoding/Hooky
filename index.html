@@ -264,6 +264,32 @@
             margin-bottom: 15px;
         }
         
+        /* Processing state styles */
+        .data-entry.processing {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-left: 4px solid #2196F3;
+            animation: pulse 2s infinite;
+        }
+        
+        .processing-data {
+            opacity: 0.8;
+            font-style: italic;
+            color: #1976D2;
+        }
+        
+        .copy-btn:disabled {
+            background: #e0e0e0;
+            color: #757575;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
         /* Responsive design */
         @media (max-width: 768px) {
             body {
@@ -380,10 +406,12 @@
             }
             
             container.innerHTML = receivedData.map(entry => `
-                <div class="data-entry">
+                <div class="data-entry ${entry.isProcessing ? 'processing' : ''}">
                     <div class="timestamp">${entry.timestamp}</div>
-                    <div class="json-data">${JSON.stringify(entry.data, null, 2)}</div>
-                    <button class="copy-btn" onclick="copyData('${entry.id}')">Copy Data</button>
+                    <div class="json-data ${entry.isProcessing ? 'processing-data' : ''}">${JSON.stringify(entry.data, null, 2)}</div>
+                    <button class="copy-btn" onclick="copyData('${entry.id}')" ${entry.isProcessing ? 'disabled' : ''}>
+                        ${entry.isProcessing ? '🔄 Processing...' : 'Copy Data'}
+                    </button>
                 </div>
             `).join('');
         }
@@ -407,12 +435,35 @@
                 return; // Don't display system messages
             }
             
-            receivedData.unshift({
-                id: Date.now().toString(),
+            // Show processing indicator first
+            const processingId = Date.now().toString();
+            const processingEntry = {
+                id: processingId,
                 timestamp: new Date().toLocaleString('en-US'),
-                data: data
-            });
+                data: { 
+                    status: 'processing',
+                    message: '🔄 Processing webhook data...',
+                    type: 'processing'
+                },
+                isProcessing: true
+            };
+            
+            receivedData.unshift(processingEntry);
             updateDataDisplay();
+            
+            // After a short delay, replace with actual data
+            setTimeout(() => {
+                const index = receivedData.findIndex(item => item.id === processingId);
+                if (index !== -1) {
+                    receivedData[index] = {
+                        id: processingId,
+                        timestamp: new Date().toLocaleString('en-US'),
+                        data: data,
+                        isProcessing: false
+                    };
+                    updateDataDisplay();
+                }
+            }, 800); // 800ms delay to show processing state
         };
         
         eventSource.onerror = function(event) {
