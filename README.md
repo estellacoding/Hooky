@@ -106,7 +106,8 @@ Hooky/
 ├── Dockerfile         # Docker configuration
 ├── assets/            # Static assets
 │   └── images/        # Images and logos
-│       └── logo.png   # Hooky logo
+│       ├── logo.png   # Hooky logo
+│       └── browser-logo.png  # Browser favicon
 ├── .gitignore         # Git ignore file
 └── README.md          # This file
 ```
