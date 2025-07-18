@@ -396,7 +396,7 @@
             }
         }
         
-        // 使用 EventSource 或 WebSocket 來接收實時數據
+        // Use EventSource to receive real-time data
         const eventSource = new EventSource('/events');
         
         eventSource.onmessage = function(event) {

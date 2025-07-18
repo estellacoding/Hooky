@@ -18,6 +18,7 @@ import json
 import queue
 import os
 import logging
+import time
 from datetime import datetime
 from typing import Dict, Any, Optional, List
 
@@ -39,7 +40,6 @@ clients: List['SSEClient'] = []
 
 # Configuration constants
 MAX_WEBHOOK_DATA_SIZE = 1000  # Maximum number of webhook entries to store
-SSE_HEARTBEAT_INTERVAL = 30   # Heartbeat interval in seconds
 
 
 class SSEClient:
@@ -62,17 +62,14 @@ class SSEClient:
         except Exception as e:
             logger.error(f"Failed to put data in client queue: {e}")
     
-    def get(self, timeout: int = SSE_HEARTBEAT_INTERVAL) -> Optional[str]:
-        """Get data from queue with timeout
+    def get(self) -> Optional[str]:
+        """Get data from queue (non-blocking)
         
-        Args:
-            timeout: Timeout in seconds
-            
         Returns:
-            Data from queue or None if timeout
+            Data from queue or None if empty
         """
         try:
-            return self.queue.get(timeout=timeout)
+            return self.queue.get_nowait()
         except queue.Empty:
             return None
     
@@ -237,16 +234,22 @@ def events():
     def event_stream():
         """Generator function that yields SSE data"""
         client = SSEClient()
+        heartbeat_sent = False
         try:
+            # Send initial heartbeat once
+            if not heartbeat_sent:
+                yield f"data: {json.dumps({'type': 'heartbeat', 'timestamp': datetime.now().isoformat()})}\n\n"
+                heartbeat_sent = True
+            
             while True:
                 # Get data from client queue
                 data = client.get()
-                if data is None:
-                    # Send heartbeat to keep connection alive
-                    yield f"data: {json.dumps({'type': 'heartbeat', 'timestamp': datetime.now().isoformat()})}\n\n"
-                else:
+                if data is not None:
                     # Send actual webhook data
                     yield f"data: {data}\n\n"
+                else:
+                    # Small delay to prevent CPU overuse
+                    time.sleep(0.1)
         except GeneratorExit:
             # Clean up client when connection closes
             client.cleanup()
@@ -352,7 +355,6 @@ if __name__ == '__main__':
     logger.info("Starting Webhook Receiver...")
     logger.info(f"Server will run on {host}:{port}")
     logger.info(f"Maximum webhook data size: {MAX_WEBHOOK_DATA_SIZE}")
-    logger.info(f"SSE heartbeat interval: {SSE_HEARTBEAT_INTERVAL} seconds")
     
     try:
         # Start Flask application
