@@ -17,7 +17,7 @@ A simple webhook receiver tool that can receive webhook data from Fluent Booking
 ### Quick Deploy
 
 1. Fork this repository
-2. Go to [Zeabur](https://zeabur.com)
+2. Go to [Zeabur](https://zeabur.com/referral?referralCode=stelladai1028)
 3. Create a new project
 4. Import from GitHub and select your forked repository
 5. Zeabur will automatically detect and deploy the Flask application
@@ -46,6 +46,8 @@ You can set these environment variables in Zeabur:
 
 ## Local Development
 
+**Note**: Most webhook providers require HTTPS endpoints and won't accept HTTP URLs. Local development with HTTP is only suitable for testing with tools like curl or Postman. For actual webhook integration, deploy to a cloud platform with HTTPS.
+
 1. Install dependencies:
 ```bash
 pip install -r requirements.txt
@@ -61,7 +63,14 @@ python server.py
 http://localhost:5000
 ```
 
-4. Copy the webhook URL to your service (e.g., Fluent Booking)
+4. For testing locally:
+   - Use tools like curl, Postman, or browser for manual testing
+   - The local HTTP endpoint is: `http://localhost:5000/webhook`
+   - **Important**: This HTTP URL cannot be used with real webhook services
+
+5. For production webhook integration:
+   - Deploy to a cloud platform (like [Zeabur](https://zeabur.com/referral?referralCode=stelladai1028)) to get HTTPS URL
+   - Use the HTTPS webhook URL from your deployment
 
 ## API Endpoints
 
