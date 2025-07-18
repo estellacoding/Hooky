@@ -38,7 +38,7 @@ webhook_data: List[Dict[str, Any]] = []
 # List of connected SSE clients for real-time updates
 clients: List['SSEClient'] = []
 
-# Global flag to track if heartbeat has been sent
+# Global flag to ensure heartbeat is sent only once per server session
 heartbeat_sent = False
 
 # Configuration constants
@@ -239,19 +239,20 @@ def events():
         client = SSEClient()
         global heartbeat_sent
         try:
-            # Send initial heartbeat once globally
+            # Send initial heartbeat once globally to establish connection
+            # This ensures client knows the connection is active
             if not heartbeat_sent:
                 yield f"data: {json.dumps({'type': 'heartbeat', 'timestamp': datetime.now().isoformat()})}\n\n"
                 heartbeat_sent = True
             
             while True:
-                # Get data from client queue
+                # Get data from client queue (non-blocking)
                 data = client.get()
                 if data is not None:
-                    # Send actual webhook data
+                    # Send actual webhook data to client
                     yield f"data: {data}\n\n"
                 else:
-                    # Small delay to prevent CPU overuse
+                    # Small delay to prevent CPU overuse in polling loop
                     time.sleep(0.1)
         except GeneratorExit:
             # Clean up client when connection closes
