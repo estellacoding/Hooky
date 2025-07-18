@@ -93,10 +93,10 @@ Hooky/
 ├── server.py          # Flask server
 ├── index.html         # Web interface
 ├── requirements.txt   # Python dependencies
-├── zbpack.json       # Zeabur deployment config
-├── Dockerfile        # Docker configuration
-├── .gitignore        # Git ignore file
-└── README.md         # This file
+├── zbpack.json        # Zeabur deployment config
+├── Dockerfile         # Docker configuration
+├── .gitignore         # Git ignore file
+└── README.md          # This file
 ```
 
 ## Contributing
