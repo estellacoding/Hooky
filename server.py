@@ -145,33 +145,41 @@ def index():
 
 @app.route('/webhook', methods=['POST', 'GET'])
 def webhook():
-    """Main webhook endpoint that accepts both GET and POST requests
-    
-    Returns:
-        JSON response with status and timestamp
-    """
+    print("\n====== Webhook Received ======")
+    print("Method:", request.method)
+    print("Headers:", dict(request.headers))
+    print("is_json:", request.is_json)
+    print("Raw Body:", request.get_data(as_text=True))
+
     try:
-        # Extract data based on request method
+        # 判斷資料來源與格式
         if request.method == 'POST':
-            # Try to get JSON data first (most common)
             if request.is_json:
                 data = request.get_json()
+                source = "json"
+            elif request.form:
+                data = request.form.to_dict()
+                source = "form"
             else:
-                # Fall back to form data
-                data = dict(request.form)
-                if not data:
-                    # If no form data, get raw data as string
-                    raw_data = request.get_data(as_text=True)
-                    data = raw_data if raw_data else {}
+                raw_text = request.get_data(as_text=True)
+                try:
+                    data = json.loads(raw_text)
+                    source = "raw-json"
+                except:
+                    data = {"raw": raw_text}
+                    source = "raw-text"
         else:
-            # GET request - extract query parameters
-            data = dict(request.args)
-        
-        # Validate data before processing
+            data = request.args.to_dict()
+            source = "get"
+
+        print(f"[Webhook] Data parsed from: {source}")
+        print(f"[Webhook] Parsed Data: {data}")
+
+        # 資料驗證（可依需要加強）
         if not validate_webhook_data(data):
             raise ValueError("Invalid webhook data")
-        
-        # Create comprehensive webhook entry
+
+        # 儲存
         webhook_entry = {
             'id': f"webhook_{datetime.now().timestamp()}",
             'timestamp': datetime.now().isoformat(),
@@ -180,31 +188,24 @@ def webhook():
             'data': data,
             'remote_addr': request.remote_addr,
             'user_agent': request.headers.get('User-Agent', 'Unknown'),
-            'content_type': request.headers.get('Content-Type', 'Unknown')
+            'content_type': request.headers.get('Content-Type', 'Unknown'),
+            'source': source
         }
-        
-        # Store data in memory
+
         webhook_data.append(webhook_entry)
-        
-        # Clean up old data if necessary
         cleanup_old_data()
-        
-        # Broadcast to all connected SSE clients
         broadcast_to_clients(webhook_entry)
-        
-        # Log successful webhook receipt
+
         logger.info(f"Webhook received: {request.method} from {request.remote_addr}")
-        
-        # Return success response
+
         return jsonify({
             'status': 'success',
             'message': 'Webhook received successfully',
             'timestamp': webhook_entry['timestamp'],
             'id': webhook_entry['id']
         }), 200
-        
+
     except Exception as e:
-        # Handle errors and log them
         error_entry = {
             'id': f"error_{datetime.now().timestamp()}",
             'timestamp': datetime.now().isoformat(),
@@ -214,11 +215,9 @@ def webhook():
             'type': 'error'
         }
         webhook_data.append(error_entry)
-        
-        # Log error
+
         logger.error(f"Webhook error: {e} from {request.remote_addr}")
-        
-        # Return error response
+
         return jsonify({
             'status': 'error',
             'message': str(e),
