@@ -46,7 +46,7 @@ You can set these environment variables in Zeabur:
 
 ## Local Development
 
-**Note**: Most webhook providers require HTTPS endpoints and won't accept HTTP URLs. Local development with HTTP is only suitable for testing with tools like curl or Postman. For actual webhook integration, deploy to a cloud platform with HTTPS (like [Zeabur](https://zeabur.com/referral?referralCode=stelladai1028)).
+**Note**: Most webhook providers require HTTPS endpoints and won't accept HTTP URLs. Local development with HTTP is only suitable for testing with tools like curl or Postman. For actual webhook integration, deploy to a cloud platform (like [Zeabur](https://zeabur.com/referral?referralCode=stelladai1028)) with HTTPS.
 
 1. Install dependencies:
 ```bash
