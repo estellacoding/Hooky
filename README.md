@@ -104,6 +104,9 @@ Hooky/
 ├── requirements.txt   # Python dependencies
 ├── zbpack.json        # Zeabur deployment config
 ├── Dockerfile         # Docker configuration
+├── assets/            # Static assets
+│   └── images/        # Images and logos
+│       └── logo.png   # Hooky logo
 ├── .gitignore         # Git ignore file
 └── README.md          # This file
 ```
