@@ -468,7 +468,7 @@
         </main>
         
         <footer>
-            <p>Hooky Webhook Receiver Tool &copy; 2025 | Real-time Data Visualization & Analysis</p>
+            <p>Hooky Webhook Receiver &copy; <span id="currentYear">2025</span> | Real-time Data Visualization & Analysis</p>
         </footer>
     </div>
     
@@ -479,6 +479,9 @@
             // Set webhook URL
             const webhookUrl = `${window.location.origin}/webhook`;
             document.getElementById('webhookUrl').textContent = webhookUrl;
+            
+            // Update footer year automatically
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
             
             // DOM Elements
             const copyUrlBtn = document.getElementById('copyUrlBtn');
