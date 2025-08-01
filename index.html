@@ -526,6 +526,11 @@
                     timestamp = entry.data.created_at || entry.data.updated_at || entry.data.timestamp || entry.timestamp;
                 }
                 
+                // Fix timestamps without timezone info - assume UTC
+                if (timestamp && !timestamp.includes('+') && !timestamp.includes('Z')) {
+                    timestamp += '+00:00'; // Assume UTC if no timezone specified
+                }
+                
                 // Debug: log the actual timestamp being used
                 console.log('formatTimestamp - Using timestamp:', timestamp);
                 console.log('formatTimestamp - Converted date:', new Date(timestamp).toString());
@@ -833,6 +838,11 @@
                         let timestamp = data.timestamp;
                         if (data.data && typeof data.data === 'object') {
                             timestamp = data.data.created_at || data.data.updated_at || data.data.timestamp || data.timestamp;
+                        }
+                        
+                        // Fix timestamps without timezone info - assume UTC
+                        if (timestamp && !timestamp.includes('+') && !timestamp.includes('Z')) {
+                            timestamp += '+00:00'; // Assume UTC if no timezone specified
                         }
                         
                         // Debug: log the actual timestamp being used for stats
