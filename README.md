@@ -105,9 +105,9 @@ Hooky/
 │       ├── hooky-logo-1080.png
 │       ├── hooky-logo-1080-white.png
 │       └── browser-logo.png
-├── .gitignore         # Git ignore file
-├── LICENSE           # MIT License
-└── README.md          # This file
+├── .gitignore
+├── LICENSE
+└── README.md
 ```
 
 ## Contributing
