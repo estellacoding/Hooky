@@ -558,7 +558,7 @@
                 getCount.textContent = stats.get;
                 
                 if (stats.lastReceivedTime) {
-                    lastReceived.textContent = stats.lastReceivedTime.toLocaleTimeString();
+                    lastReceived.textContent = stats.lastReceivedTime.toLocaleString();
                 }
             }
             
@@ -615,14 +615,13 @@
                 dataDisplay.innerHTML = filteredData.map(entry => {
                     const methodClass = entry.method ? entry.method.toLowerCase() : 'unknown';
                     const now = new Date(entry.timestamp);
-                    const timeString = now.toLocaleTimeString();
-                    const dateString = now.toLocaleDateString();
+                    const localDateTime = now.toLocaleString();
                     
                     return `
                         <div class="data-item ${methodClass}">
                             <div class="data-header">
                                 <span class="data-method ${methodClass}">${entry.method || 'UNKNOWN'}</span>
-                                <span>${dateString} at ${timeString}</span>
+                                <span>${localDateTime}</span>
                             </div>
                             <div class="data-content">${JSON.stringify(entry.data || entry, null, 2)}</div>
                         </div>
