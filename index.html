@@ -486,6 +486,19 @@
             // Update footer year automatically
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             
+            // Test timezone conversion with a known UTC time
+            console.log('=== TIMEZONE TEST ===');
+            const testUTC = '2025-08-01T17:29:20+00:00';
+            const testDate = new Date(testUTC);
+            console.log('UTC input:', testUTC);
+            console.log('Parsed date:', testDate.toString());
+            console.log('Local year:', testDate.getFullYear());
+            console.log('Local month:', testDate.getMonth() + 1);
+            console.log('Local date:', testDate.getDate());
+            console.log('Local hours:', testDate.getHours());
+            console.log('Local minutes:', testDate.getMinutes());
+            console.log('=== END TEST ===');
+            
             
             // Helper function to format any date object to consistent format
             function formatDateToString(date) {
