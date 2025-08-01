@@ -1,4 +1,4 @@
-# Webhook Receiver
+# Hooky Webhook Receiver
 A powerful tool to receive, filter, and analyze webhook data in real-time from any service.
 
 ## Features
