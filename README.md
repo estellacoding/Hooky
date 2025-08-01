@@ -1,16 +1,20 @@
 # Webhook Receiver
-
-A simple webhook receiver tool that can receive webhook data from Fluent Booking or other services and display the results in real-time on a web page.
+A powerful tool to receive, filter, and analyze webhook data in real-time from any service.
 
 ## Features
 
 - 🔗 Auto-generate webhook URL
-- 📊 Real-time display of received data
+- 📊 Real-time display of received data with live statistics dashboard  
 - 📋 One-click copy webhook URL and data
 - 🔄 Support GET and POST requests
 - 📱 Responsive design, mobile-friendly
-- 🧹 Clear data functionality
-- 🎨 Beautiful modern UI with animations
+- 🧹 Clear data functionality with backend API integration
+- 🎨 Beautiful modern UI with animated gradient background
+- 🔍 Advanced filtering (method, content search, time range)
+- ⚡ Webhook simulation for testing
+- 📤 Export webhook data to JSON
+- 📈 Real-time statistics (total webhooks, POST/GET counts, last received time)
+- 🎛️ Modern card-based interface with Font Awesome icons
 
 ## Deployment on Zeabur
 
@@ -38,14 +42,7 @@ cd Hooky
    - Select your repository
    - Deploy automatically
 
-### Environment Variables (Optional)
-
-You can set these environment variables in Zeabur:
-- `PORT`: Port number (default: 5000)
-- `DEBUG`: Set to 'true' for debug mode (default: false)
-
 ## Local Development
-
 **Note**: Most webhook providers require HTTPS endpoints and won't accept HTTP URLs. Local development with HTTP is only suitable for testing with tools like curl or Postman. For actual webhook integration, deploy to a cloud platform (like [Zeabur](https://zeabur.com/referral?referralCode=stelladai1028)) with HTTPS.
 
 1. Install dependencies:
@@ -73,47 +70,47 @@ http://localhost:5000
    - Use the HTTPS webhook URL from your deployment
 
 ## API Endpoints
-
-- `GET /` - Main page
+- `GET /` - Main page with advanced UI
 - `POST /webhook` - Receive webhook data
-- `GET /webhook` - Can also receive GET webhook requests
-- `GET /events` - Server-Sent Events stream
+- `GET /webhook` - Can also receive GET webhook requests  
+- `GET /events` - Server-Sent Events stream for real-time updates
 - `GET /api/data` - Get all received data
 - `POST /api/clear` - Clear all data
+- `GET /api/health` - Health check endpoint
 
 ## Supported Data Formats
-
 - JSON data
 - Form data
 - Query parameters
 - Raw text data
 
 ## Use Cases
-
-- Test webhook integration
-- Debug webhook data
-- Monitor webhook calls
+- Test webhook integration with simulation features
+- Debug webhook data with advanced filtering
+- Monitor webhook calls with real-time statistics
 - Develop webhook processing logic
+- Export webhook data for analysis
+- Real-time webhook monitoring dashboard
 
 ## File Structure
-
 ```
 Hooky/
-├── server.py          # Flask server
-├── index.html         # Web interface
-├── requirements.txt   # Python dependencies
-├── zbpack.json        # Zeabur deployment config
-├── Dockerfile         # Docker configuration
+├── server.py          # Flask server with SSE support
+├── index.html         # Advanced web interface with modern UI
+├── wsgi.py            # WSGI entry point for deployment
+├── requirements.txt   # Python dependencies  
 ├── assets/            # Static assets
 │   └── images/        # Images and logos
-│       ├── logo.png   # Hooky logo
-│       └── browser-logo.png  # Browser favicon
+│       ├── hooky-logo.png
+│       ├── hooky-logo-1080.png
+│       ├── hooky-logo-1080-white.png
+│       └── browser-logo.png
 ├── .gitignore         # Git ignore file
+├── LICENSE           # MIT License
 └── README.md          # This file
 ```
 
 ## Contributing
-
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
@@ -121,5 +118,4 @@ Hooky/
 5. Submit a pull request
 
 ## License
-
 This project is open source and available under the MIT License.
