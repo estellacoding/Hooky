@@ -473,7 +473,6 @@
         
         <footer>
             <p>Hooky Webhook Receiver &copy; <span id="currentYear">2025</span> | Real-time Data Visualization & Analysis</p>
-            <p><small>Debug: Browser TZ: <span id="debugTZ">Loading...</span> | Offset: <span id="debugOffset">Loading...</span></small></p>
         </footer>
     </div>
     
@@ -488,21 +487,11 @@
             // Update footer year automatically
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             
-            // Debug timezone info
-            const now = new Date();
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const offset = now.getTimezoneOffset();
-            console.log('Browser timezone:', timezone);
-            console.log('Browser timezone offset:', offset);
-            console.log('Current time:', now.toString());
-            
-            // Display debug info on page
-            document.getElementById('debugTZ').textContent = timezone;
-            document.getElementById('debugOffset').textContent = `${offset} min`;
             
             // Helper function to format any date object to consistent format
             function formatDateToString(date) {
-                const formatter = new Intl.DateTimeFormat('en-CA', {
+                // Use user's timezone without forcing a specific locale
+                const formatter = new Intl.DateTimeFormat(undefined, {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
