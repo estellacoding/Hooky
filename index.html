@@ -9,7 +9,6 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/browser-logo.png">
     <link rel="shortcut icon" href="./assets/images/browser-logo.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/browser-logo.png">
-    <link rel="manifest" href="./assets/site.webmanifest">
     <meta name="theme-color" content="#6c5ce7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -490,24 +489,13 @@
             
             // Helper function to format any date object to consistent format
             function formatDateToString(date) {
-                // Use user's timezone without forcing a specific locale
-                const formatter = new Intl.DateTimeFormat(undefined, {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                });
-                
-                const parts = formatter.formatToParts(date);
-                const year = parts.find(p => p.type === 'year').value;
-                const month = parts.find(p => p.type === 'month').value;
-                const day = parts.find(p => p.type === 'day').value;
-                const hour24 = parseInt(parts.find(p => p.type === 'hour').value);
-                const minutes = parts.find(p => p.type === 'minute').value;
-                const seconds = parts.find(p => p.type === 'second').value;
+                // Direct method using native JavaScript date methods in user's timezone
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hour24 = date.getHours();
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
                 
                 // Convert to 12-hour format
                 const period = hour24 >= 12 ? 'PM' : 'AM';
