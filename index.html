@@ -526,6 +526,10 @@
                     timestamp = entry.data.created_at || entry.data.updated_at || entry.data.timestamp || entry.timestamp;
                 }
                 
+                // Debug: log the actual timestamp being used
+                console.log('formatTimestamp - Using timestamp:', timestamp);
+                console.log('formatTimestamp - Converted date:', new Date(timestamp).toString());
+                
                 return formatDateToString(new Date(timestamp));
             }
             
@@ -830,6 +834,11 @@
                         if (data.data && typeof data.data === 'object') {
                             timestamp = data.data.created_at || data.data.updated_at || data.data.timestamp || data.timestamp;
                         }
+                        
+                        // Debug: log the actual timestamp being used for stats
+                        console.log('Stats - Using timestamp:', timestamp);
+                        console.log('Stats - Converted date:', new Date(timestamp).toString());
+                        
                         stats.lastReceivedTime = new Date(timestamp);
                         
                         updateStats();
