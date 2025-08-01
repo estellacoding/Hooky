@@ -487,6 +487,19 @@
             // Update footer year automatically
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             
+            // Helper function to extract and format timestamp
+            function formatTimestamp(entry) {
+                let timestamp = entry.timestamp;
+                
+                // Check for common timestamp fields in webhook data
+                if (entry.data && typeof entry.data === 'object') {
+                    timestamp = entry.data.created_at || entry.data.updated_at || entry.data.timestamp || entry.timestamp;
+                }
+                
+                const date = new Date(timestamp);
+                return date.toLocaleString();
+            }
+            
             // DOM Elements
             const copyUrlBtn = document.getElementById('copyUrlBtn');
             const simulateBtn = document.getElementById('simulateBtn');
@@ -618,8 +631,7 @@
                 
                 dataDisplay.innerHTML = filteredData.map(entry => {
                     const methodClass = entry.method ? entry.method.toLowerCase() : 'unknown';
-                    const now = new Date(entry.timestamp);
-                    const localDateTime = now.toLocaleString();
+                    const localDateTime = formatTimestamp(entry);
                     
                     return `
                         <div class="data-item ${methodClass}">
@@ -784,7 +796,12 @@
                         } else if (data.method === "GET") {
                             stats.get++;
                         }
-                        stats.lastReceivedTime = new Date(data.timestamp);
+                        // Use the most relevant timestamp from the webhook data
+                        let timestamp = data.timestamp;
+                        if (data.data && typeof data.data === 'object') {
+                            timestamp = data.data.created_at || data.data.updated_at || data.data.timestamp || data.timestamp;
+                        }
+                        stats.lastReceivedTime = new Date(timestamp);
                         
                         updateStats();
                         updateDataDisplay();
