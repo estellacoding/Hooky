@@ -293,7 +293,7 @@
         }
         
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--primary);
             margin: 10px 0;
@@ -498,7 +498,7 @@
                 
                 const date = new Date(timestamp);
                 // Format as yyyy/mm/dd hh:mm:ss AM/PM in user's timezone
-                return date.toLocaleString('en-US', { 
+                const formatted = date.toLocaleString('en-US', { 
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
@@ -506,7 +506,9 @@
                     minute: '2-digit',
                     second: '2-digit',
                     hour12: true
-                }).replace(/(\d+)\/(\d+)\/(\d+)/, '$3/$1/$2');
+                });
+                // Convert mm/dd/yyyy, time to yyyy/mm/dd, time
+                return formatted.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s*(.+)/, '$3/$1/$2, $4');
             }
             
             // DOM Elements
@@ -584,7 +586,7 @@
                 getCount.textContent = stats.get;
                 
                 if (stats.lastReceivedTime) {
-                    lastReceived.textContent = stats.lastReceivedTime.toLocaleString('en-US', { 
+                    const formatted = stats.lastReceivedTime.toLocaleString('en-US', { 
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit',
@@ -592,7 +594,9 @@
                         minute: '2-digit',
                         second: '2-digit',
                         hour12: true
-                    }).replace(/(\d+)\/(\d+)\/(\d+)/, '$3/$1/$2');
+                    });
+                    // Convert mm/dd/yyyy, time to yyyy/mm/dd, time
+                    lastReceived.textContent = formatted.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s*(.+)/, '$3/$1/$2, $4');
                 }
             }
             
