@@ -496,19 +496,22 @@
                     timestamp = entry.data.created_at || entry.data.updated_at || entry.data.timestamp || entry.timestamp;
                 }
                 
+                // Create date object and ensure proper timezone handling
                 const date = new Date(timestamp);
-                // Format as yyyy/mm/dd hh:mm:ss AM/PM in user's timezone
-                const formatted = date.toLocaleString('en-US', { 
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: true
-                });
-                // Convert mm/dd/yyyy, time to yyyy/mm/dd, time
-                return formatted.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s*(.+)/, '$3/$1/$2, $4');
+                
+                // Get components in local timezone
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = date.getHours();
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+                
+                // Convert to 12-hour format
+                const period = hours >= 12 ? 'PM' : 'AM';
+                const displayHours = String(hours % 12 || 12).padStart(2, '0');
+                
+                return `${year}/${month}/${day}, ${displayHours}:${minutes}:${seconds} ${period}`;
             }
             
             // DOM Elements
@@ -586,17 +589,21 @@
                 getCount.textContent = stats.get;
                 
                 if (stats.lastReceivedTime) {
-                    const formatted = stats.lastReceivedTime.toLocaleString('en-US', { 
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: true
-                    });
-                    // Convert mm/dd/yyyy, time to yyyy/mm/dd, time
-                    lastReceived.textContent = formatted.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s*(.+)/, '$3/$1/$2, $4');
+                    const date = stats.lastReceivedTime;
+                    
+                    // Get components in local timezone
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const hours = date.getHours();
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                    const seconds = String(date.getSeconds()).padStart(2, '0');
+                    
+                    // Convert to 12-hour format
+                    const period = hours >= 12 ? 'PM' : 'AM';
+                    const displayHours = String(hours % 12 || 12).padStart(2, '0');
+                    
+                    lastReceived.textContent = `${year}/${month}/${day}, ${displayHours}:${minutes}:${seconds} ${period}`;
                 }
             }
             
