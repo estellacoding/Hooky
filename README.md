@@ -97,4 +97,4 @@ Hooky/
 ```
 
 ## Demo
-🚀 **Live Demo**: [Hooky Webhook Receiver](https://hooky.zeabur.app/)
+[Hooky Webhook Receiver](https://hooky.zeabur.app/)
