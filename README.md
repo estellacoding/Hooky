@@ -32,9 +32,6 @@ cd Hooky
    - Select your repository
    - Deploy automatically
 
-### Demo
-🚀 **Live Demo**: [Hooky Webhook Receiver](https://hooky.zeabur.app/)
-
 ## Local Development
 **Note**: Most webhook providers require HTTPS endpoints and won't accept HTTP URLs. Local development with HTTP is only suitable for testing with tools like curl or Postman. For actual webhook integration, deploy to a cloud platform (like [Zeabur](https://zeabur.com/referral?referralCode=stelladai1028)) with HTTPS.
 1. Install dependencies:
@@ -99,12 +96,5 @@ Hooky/
 └── README.md
 ```
 
-## Contributing
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-This project is open source and available under the MIT License.
+## Demo
+🚀 **Live Demo**: [Hooky Webhook Receiver](https://hooky.zeabur.app/)
